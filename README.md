@@ -21,6 +21,9 @@ event list exported by the same animation timeline, so every sound is frame-accu
 
 Build: `pip install numpy scipy pyloudnorm`, `npm i playwright`, then `motion/build.sh`.
 
+Palette: Sora brand ramp #00073A → #96C5F8 (navy end for dark scenes, full ramp for the
+loop section and the end-card sunrise, white mark on the ramp).
+
 Scenes: chatbot *replies* → agent has a *goal* → makes a *plan* → uses *tools* → *remembers* →
 (light mode) *loops* → agents *collaborate* → not a chat, a *system* → Sora Systems end card.
 Key: D♭ major (I–vi–IV–ii–V movement), all effects tuned to D♭ major pentatonic.

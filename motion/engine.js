@@ -6,11 +6,13 @@
 
   // ---------- palette ----------
   const C = {
-    bg0: '#02040A', bg1: '#060B1A',
-    cobalt: '#1F5BFF', logo: '#0050FF', cyan: '#7FE0FF', ice: '#EAF2FF', violet: '#8E7CFF',
-    light: '#EEF2F9', ink: '#0D1322',
+    cobalt: '#125BEB', logo: '#0050FF', cyan: '#9CD0FF', ice: '#EAF2FF', violet: '#569DF7',
+    ink: '#00073A',
   };
-  const hex = (h) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+  // brand background ramp (180deg)
+  const BRAND = [[0.03, '#00073A'], [0.10, '#000B4D'], [0.20, '#001374'], [0.30, '#001D9E'], [0.40, '#012FC1'],
+    [0.50, '#0B45D7'], [0.60, '#125BEB'], [0.70, '#337DF4'], [0.80, '#569DF7'], [0.90, '#7CB7F9'], [0.97, '#96C5F8']];
+  const hex = (h) => h[0] === '#' ? [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)] : h.match(/[\d.]+/g).slice(0, 3).map(Number);
   const rgba = (h, a) => { const [r, g, b] = hex(h); return `rgba(${r},${g},${b},${a})`; };
   const mix = (h1, h2, k) => { const a = hex(h1), b = hex(h2); return `rgb(${a.map((v, i) => Math.round(lerp(v, b[i], k))).join(',')})`; };
 
@@ -41,7 +43,7 @@
   function keyFill(x, px, w, dark) {
     const g = x.createLinearGradient(px, 0, px + w, 0);
     if (dark) { g.addColorStop(0, '#2B5CFF'); g.addColorStop(1, '#6A4DF5'); }
-    else { g.addColorStop(0, '#9BE6FF'); g.addColorStop(1, '#A99BFF'); }
+    else { g.addColorStop(0, '#D6EAFF'); g.addColorStop(1, '#7CB7F9'); }
     return g;
   }
   // animated line: words blur/rise in with stagger, blur/rise out at tout
@@ -138,16 +140,17 @@
   // ---------- background ----------
   function background(t) {
     const g = X.createLinearGradient(0, 0, 0, H);
-    g.addColorStop(0, '#04060E'); g.addColorStop(0.5, '#03050B'); g.addColorStop(1, '#020309');
+    g.addColorStop(0, '#00041F'); g.addColorStop(0.25, '#00073A'); g.addColorStop(0.62, '#000B4D'); g.addColorStop(1, '#001374');
     X.fillStyle = g; X.fillRect(0, 0, W, H);
-    // slow cobalt nebula
+    // the ramp continues below the frame: a soft royal-blue horizon
+    const hz = X.createRadialGradient(540, H + 260, 0, 540, H + 260, 1100);
+    hz.addColorStop(0, 'rgba(1,47,193,0.55)'); hz.addColorStop(0.5, 'rgba(0,29,158,0.18)'); hz.addColorStop(1, 'rgba(0,19,116,0)');
+    X.fillStyle = hz; X.fillRect(0, 0, W, H);
+    // slow royal nebula
     const nx = 540 + 120 * Math.sin(t * 0.21), ny = 980 + 160 * Math.cos(t * 0.17);
     const n = X.createRadialGradient(nx, ny, 0, nx, ny, 900);
-    n.addColorStop(0, 'rgba(24,52,140,0.16)'); n.addColorStop(0.5, 'rgba(18,30,90,0.06)'); n.addColorStop(1, 'rgba(0,0,0,0)');
+    n.addColorStop(0, 'rgba(1,47,193,0.16)'); n.addColorStop(0.5, 'rgba(0,29,158,0.06)'); n.addColorStop(1, 'rgba(0,0,0,0)');
     X.fillStyle = n; X.fillRect(0, 0, W, H);
-    const v = X.createRadialGradient(780 - 90 * Math.sin(t * 0.13), 1500, 0, 780, 1500, 700);
-    v.addColorStop(0, 'rgba(70,40,150,0.07)'); v.addColorStop(1, 'rgba(0,0,0,0)');
-    X.fillStyle = v; X.fillRect(0, 0, W, H);
     // dust
     for (let i = 0; i < 70; i++) {
       const sp = 6 + hash(i * 3.1) * 14;
@@ -158,13 +161,18 @@
       circle(X, px, py, 0.8 + hash(i * 9.1) * 1.4); X.fill();
     }
   }
+  function brandRamp(x, a = 1) {
+    const g = x.createLinearGradient(0, 0, 0, H);
+    for (const [o, c] of BRAND) g.addColorStop(o, c);
+    x.save(); x.globalAlpha = a; x.fillStyle = g; x.fillRect(0, 0, W, H); x.restore();
+  }
   function lightBackground(t) {
-    X.fillStyle = C.light; X.fillRect(0, 0, W, H);
-    const g = X.createRadialGradient(540, 1010, 0, 540, 1010, 900);
-    g.addColorStop(0, 'rgba(205,220,255,0.9)'); g.addColorStop(0.55, 'rgba(225,233,252,0.5)'); g.addColorStop(1, 'rgba(238,242,249,0)');
+    brandRamp(X);
+    const g = X.createRadialGradient(540, 1010, 0, 540, 1010, 620);
+    g.addColorStop(0, 'rgba(150,197,248,0.28)'); g.addColorStop(1, 'rgba(150,197,248,0)');
     X.fillStyle = g; X.fillRect(0, 0, W, H);
-    const g2 = X.createRadialGradient(300 + 60 * Math.sin(t), 600, 0, 300, 600, 600);
-    g2.addColorStop(0, 'rgba(200,190,255,0.25)'); g2.addColorStop(1, 'rgba(200,190,255,0)');
+    const g2 = X.createRadialGradient(260 + 80 * Math.sin(t * 0.7), 700, 0, 260, 700, 560);
+    g2.addColorStop(0, 'rgba(51,125,244,0.22)'); g2.addColorStop(1, 'rgba(51,125,244,0)');
     X.fillStyle = g2; X.fillRect(0, 0, W, H);
   }
 
@@ -172,12 +180,10 @@
   function header(t) {
     const a = eoc(prog(t, 0.05, 0.9)) * (1 - eio(prog(t, 26.6, 27.1)));
     if (a <= 0.003) return;
-    const l = lightAt(540, 232, t);
     X.save();
-    X.globalAlpha = a;
     X.font = SANS(40, 300); X.textAlign = 'center';
-    X.fillStyle = mix('#DCE6FF', '#1A2236', l);
-    X.globalAlpha = a * lerp(0.78, 0.8, l);
+    X.fillStyle = '#DCE8FF';
+    X.globalAlpha = a * 0.8;
     X.fillText('Agentic systems aren’t just chatbots', 540, 232);
     X.restore();
   }
@@ -484,11 +490,11 @@
   ];
   function card(x, cd, w, h, glowOnly) {
     if (glowOnly) {
-      const g = x.createLinearGradient(-w / 2, 0, w / 2, 0); g.addColorStop(0, '#2A62FF'); g.addColorStop(1, '#7A5CFF');
+      const g = x.createLinearGradient(-w / 2, 0, w / 2, 0); g.addColorStop(0, '#125BEB'); g.addColorStop(1, '#569DF7');
       x.fillStyle = g; rrect(x, 0, 0, w, h, 30); x.fill(); return;
     }
     const g = x.createLinearGradient(-w / 2, -h / 2, w / 2, h / 2);
-    g.addColorStop(0, '#2C66FF'); g.addColorStop(0.55, '#3E52F2'); g.addColorStop(1, '#7457F0');
+    g.addColorStop(0, '#0B45D7'); g.addColorStop(0.55, '#125BEB'); g.addColorStop(1, '#4A92F6');
     x.fillStyle = g; rrect(x, 0, 0, w, h, 30); x.fill();
     const hl = x.createLinearGradient(0, -h / 2, 0, h / 2); hl.addColorStop(0, 'rgba(255,255,255,0.22)'); hl.addColorStop(0.45, 'rgba(255,255,255,0.02)'); hl.addColorStop(1, 'rgba(0,0,30,0.12)');
     x.fillStyle = hl; rrect(x, 0, 0, w, h, 30); x.fill();
@@ -523,13 +529,15 @@
     // reflection of the settled front card, faded into the floor
     for (const it of items) {
       if (it.depth >= 0.5 || it.e < 0.6) continue;
-      const g = geom(it);
-      X.save(); X.globalAlpha = g.a * 0.12 * (1 - comp) * clamp((it.e - 0.6) * 2.5); X.translate(540, g.y + Hc * g.sy + 16); X.scale(g.sc, -g.sy); card(X, CARDS[it.i], Wc, Hc); X.restore();
-    }
-    if (items.length) {
-      const fg = X.createLinearGradient(0, base + 110, 0, base + 330);
-      fg.addColorStop(0, 'rgba(3,5,11,0)'); fg.addColorStop(1, 'rgba(3,5,11,1)');
-      X.fillStyle = fg; X.fillRect(0, base + 110, W, 240);
+      const g = geom(it), ry = g.y + Hc * g.sy + 16;
+      TM.setTransform(1, 0, 0, 1, 0, 0); TM.globalCompositeOperation = 'source-over'; TM.globalAlpha = 1;
+      TM.clearRect(0, ry - Hc, W, Hc * 2 + 20);
+      TM.save(); TM.translate(540, ry); TM.scale(g.sc, -g.sy); card(TM, CARDS[it.i], Wc, Hc); TM.restore();
+      const m = TM.createLinearGradient(0, ry - Hc * g.sy / 2, 0, ry + Hc * g.sy * 0.55);
+      m.addColorStop(0, 'rgba(0,0,0,1)'); m.addColorStop(1, 'rgba(0,0,0,0)');
+      TM.globalCompositeOperation = 'destination-in'; TM.fillStyle = m; TM.fillRect(0, ry - Hc, W, Hc * 2 + 20);
+      TM.globalCompositeOperation = 'source-over';
+      X.save(); X.globalAlpha = g.a * 0.16 * (1 - comp) * clamp((it.e - 0.6) * 2.5); X.drawImage(tmp, 0, 0); X.restore();
     }
     for (const it of items) {
       const g = geom(it);
@@ -557,7 +565,7 @@
     if (rd > 0 && ringR > 1) {
       X.save(); X.lineWidth = 3; X.lineCap = 'round';
       const g = X.createLinearGradient(540 - R, cy - R, 540 + R, cy + R);
-      g.addColorStop(0, 'rgba(43,92,255,0.55)'); g.addColorStop(1, 'rgba(110,80,240,0.55)');
+      g.addColorStop(0, 'rgba(234,242,255,0.55)'); g.addColorStop(1, 'rgba(234,242,255,0.35)');
       X.strokeStyle = g; X.beginPath(); X.arc(540, cy, ringR, -Math.PI / 2, -Math.PI / 2 + TAU * rd); X.stroke();
       // arrowheads mid-arcs
       for (let n = 0; n < 3; n++) {
@@ -565,7 +573,7 @@
         if (ap <= 0) continue;
         const ax = 540 + Math.cos(am) * ringR, ay = cy + Math.sin(am) * ringR;
         X.save(); X.translate(ax, ay); X.rotate(am + Math.PI / 2); X.globalAlpha = ap * (1 - shrink);
-        X.strokeStyle = 'rgba(60,80,200,0.6)'; X.lineWidth = 3; X.beginPath(); X.moveTo(-9, -9); X.lineTo(0, 0); X.lineTo(-9, 9); X.stroke(); X.restore();
+        X.strokeStyle = 'rgba(234,242,255,0.65)'; X.lineWidth = 3; X.beginPath(); X.moveTo(-9, -9); X.lineTo(0, 0); X.lineTo(-9, 9); X.stroke(); X.restore();
       }
       X.restore();
     }
@@ -579,13 +587,14 @@
       const N = 26, span = 1.1 * clamp((t - 17.85) / 0.3) * (1 - shrink);
       for (let i = N; i >= 1; i--) {
         const a0 = th - span * (i / N), a1 = th - span * ((i - 1) / N);
-        X.strokeStyle = `rgba(40,90,255,${(0.75 * (1 - i / N) * sparkA).toFixed(3)})`; X.lineWidth = 6 * (1 - i / N) + 1; X.lineCap = 'round';
+        X.strokeStyle = `rgba(214,234,255,${(0.8 * (1 - i / N) * sparkA).toFixed(3)})`; X.lineWidth = 6 * (1 - i / N) + 1; X.lineCap = 'round';
         X.beginPath(); X.arc(540, cy, rr, a0, a1); X.stroke();
       }
       const g = X.createRadialGradient(sx, sy, 0, sx, sy, 60);
-      g.addColorStop(0, `rgba(255,255,255,${sparkA})`); g.addColorStop(0.18, `rgba(90,150,255,${0.9 * sparkA})`); g.addColorStop(1, 'rgba(60,110,255,0)');
+      g.addColorStop(0, `rgba(255,255,255,${sparkA})`); g.addColorStop(0.18, `rgba(190,224,255,${0.8 * sparkA})`); g.addColorStop(1, 'rgba(150,197,248,0)');
       X.fillStyle = g; circle(X, sx, sy, 60); X.fill();
       X.fillStyle = `rgba(255,255,255,${sparkA})`; circle(X, sx, sy, 6); X.fill();
+      G.fillStyle = `rgba(200,230,255,${sparkA})`; circle(G, sx, sy, 16); G.fill();
     }
     // pills
     for (let n = 0; n < 3; n++) {
@@ -603,19 +612,19 @@
       X.save(); X.translate(px, py); X.scale(s, s); X.globalAlpha = a;
       X.font = SANS(36, 400);
       const tw = X.measureText(label).width, pw = tw + 128, ph = 86;
-      X.shadowColor = `rgba(30,50,140,${0.22 + 0.25 * h})`; X.shadowBlur = 40 + 30 * h; X.shadowOffsetY = 14;
+      X.shadowColor = `rgba(0,7,58,${0.35 + 0.2 * h})`; X.shadowBlur = 40 + 30 * h; X.shadowOffsetY = 14;
       X.fillStyle = C.ink; rrect(X, 0, 0, pw, ph, ph / 2); X.fill();
       X.shadowColor = 'transparent';
       if (h > 0.01) {
-        const g = X.createLinearGradient(-pw / 2, 0, pw / 2, 0); g.addColorStop(0, `rgba(43,92,255,${h})`); g.addColorStop(1, `rgba(120,85,245,${h})`);
+        const g = X.createLinearGradient(-pw / 2, 0, pw / 2, 0); g.addColorStop(0, `rgba(18,91,235,${h})`); g.addColorStop(1, `rgba(124,183,249,${h})`);
         X.fillStyle = g; rrect(X, 0, 0, pw, ph, ph / 2); X.fill();
       }
-      X.strokeStyle = 'rgba(255,255,255,0.12)'; X.lineWidth = 1.5; rrect(X, 0, 1, pw - 4, ph - 4, ph / 2); X.stroke();
-      icon(X, ic, -pw / 2 + 50, 0, 40, mix('#6E9BFF', '#FFFFFF', h), 3.2);
+      X.strokeStyle = `rgba(255,255,255,${0.14 + 0.5 * h})`; X.lineWidth = 1.5; rrect(X, 0, 1, pw - 4, ph - 4, ph / 2); X.stroke();
+      icon(X, ic, -pw / 2 + 50, 0, 40, mix('#7CB7F9', '#FFFFFF', h), 3.2);
       X.fillStyle = '#F2F5FF'; X.textAlign = 'left'; X.textBaseline = 'middle'; X.fillText(label, -pw / 2 + 84, 2);
       X.restore();
     }
-    textLine([['Then it ', 's'], ['loops.', 'i']], 540, cy + 24, 64, 17.35, 19.45, t, { dark: true, color: '#121828' });
+    textLine([['Then it ', 's'], ['loops.', 'i']], 540, cy + 24, 64, 17.35, 19.45, t);
     return [sx, sy];
   }
 
@@ -749,12 +758,12 @@
       const u = clamp(((px - cx) * 0.6 + (py - cy)) / 360 + 0.5);
       // base gradient cyan -> cobalt -> violet
       let r, g, b;
-      if (u < 0.5) { const k = u / 0.5; r = lerp(96, 31, k); g = lerp(214, 91, k); b = lerp(255, 255, k); }
-      else { const k = (u - 0.5) / 0.5; r = lerp(31, 122, k); g = lerp(91, 92, k); b = lerp(255, 245, k); }
+      if (u < 0.5) { const k = u / 0.5; r = lerp(150, 18, k); g = lerp(197, 91, k); b = lerp(248, 235, k); }
+      else { const k = (u - 0.5) / 0.5; r = lerp(18, 1, k); g = lerp(91, 47, k); b = lerp(235, 193, k); }
       const sh = 0.32 + 0.78 * dif;
       const inner = 0.25 * Math.pow(hz, 3);
-      r = r * sh + 120 * rim + 255 * spec * 0.85 + 60 * inner;
-      g = g * sh + 200 * rim + 255 * spec * 0.85 + 90 * inner;
+      r = r * sh + 110 * rim + 255 * spec * 0.85 + 60 * inner;
+      g = g * sh + 180 * rim + 255 * spec * 0.85 + 90 * inner;
       b = b * sh + 255 * rim + 255 * spec * 0.85 + 120 * inner;
       const o = (py * w + px) * 4;
       D[o] = Math.min(255, r); D[o + 1] = Math.min(255, g); D[o + 2] = Math.min(255, b); D[o + 3] = 255 * a * alpha;
@@ -802,41 +811,57 @@
       g.addColorStop(0, rgba('#9FD2FF', 0.45 * fl)); g.addColorStop(0.35, rgba(C.logo, 0.2 * fl)); g.addColorStop(1, rgba(C.logo, 0));
       X.fillStyle = g; X.fillRect(0, 0, W, H);
     }
+    // sunrise into the brand ramp
+    const sr = eio(prog(t, 27.05, 28.3));
+    if (sr > 0) {
+      // ramp rises from the bottom with a 600px feathered edge
+      TM.setTransform(1, 0, 0, 1, 0, 0); TM.globalCompositeOperation = 'source-over'; TM.globalAlpha = 1;
+      TM.clearRect(0, 0, W, H); brandRamp(TM);
+      const edge = lerp(H + 600, -600, sr);
+      const mk = TM.createLinearGradient(0, edge - 600, 0, edge);
+      mk.addColorStop(0, 'rgba(0,0,0,0)'); mk.addColorStop(1, 'rgba(0,0,0,1)');
+      TM.globalCompositeOperation = 'destination-in'; TM.fillStyle = mk; TM.fillRect(0, 0, W, H);
+      TM.globalCompositeOperation = 'source-over';
+      X.drawImage(tmp, 0, 0);
+    }
     // horizon line
     const hz = eoc(prog(t, 28.25, 29.1));
     if (hz > 0) {
       const y = 1480, hw = 420 * hz;
       both((x) => {
         const g = x.createLinearGradient(540 - hw, 0, 540 + hw, 0);
-        g.addColorStop(0, 'rgba(60,110,255,0)'); g.addColorStop(0.5, 'rgba(140,190,255,0.75)'); g.addColorStop(1, 'rgba(60,110,255,0)');
+        g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(0.5, 'rgba(255,255,255,0.8)'); g.addColorStop(1, 'rgba(255,255,255,0)');
         x.fillStyle = g; x.fillRect(540 - hw, y - 1, hw * 2, 2);
       }, 0.9);
       const gl = X.createRadialGradient(540, 1480, 0, 540, 1480, 380);
-      gl.addColorStop(0, `rgba(40,90,255,${0.16 * hz})`); gl.addColorStop(1, 'rgba(40,90,255,0)');
+      gl.addColorStop(0, `rgba(214,234,255,${0.22 * hz})`); gl.addColorStop(1, 'rgba(214,234,255,0)');
       X.save(); X.translate(0, 1480); X.scale(1, 0.25); X.translate(0, -1480); X.fillStyle = gl; X.fillRect(0, 1100, W, 760); X.restore();
     }
     // ring
     const rg = eio(prog(t, 27.55, 28.4));
     if (rg > 0) both((x) => {
-      x.strokeStyle = strokeGrad(x, 240, 600, 840, 1200, '#7FB4FF', '#8E7CFF', 0.32); x.lineWidth = 1.6;
+      x.strokeStyle = strokeGrad(x, 240, 600, 840, 1200, '#FFFFFF', '#D6EAFF', 0.4); x.lineWidth = 1.6;
       x.beginPath(); x.arc(540, 900, 292, -Math.PI / 2, -Math.PI / 2 + TAU * rg); x.stroke();
     }, 0.5);
     // logo body
     X.save(); X.globalAlpha = appear;
+    const wm = eio(prog(t, 27.2, 28.1));   // mark turns white as the ramp rises
     const lg = X.createLinearGradient(540 - 150, 900 - 190, 540 + 150, 900 + 190);
-    lg.addColorStop(0, mix('#58CFFF', '#3F7BFF', m)); lg.addColorStop(0.5, mix('#2C63FF', '#0A56FF', m)); lg.addColorStop(1, mix('#7A5CF5', '#0046E8', m));
+    lg.addColorStop(0, mix(mix('#96C5F8', '#3F7BFF', m), '#FFFFFF', wm)); lg.addColorStop(0.5, mix(mix('#125BEB', '#0A56FF', m), '#FFFFFF', wm)); lg.addColorStop(1, mix(mix('#012FC1', '#0046E8', m), '#EAF3FF', wm));
+    X.shadowColor = `rgba(0,7,58,${0.35 * wm})`; X.shadowBlur = 50; X.shadowOffsetY = 18;
     X.fillStyle = lg; pathPts(X, pts); X.fill();
+    X.shadowColor = 'transparent';
     // soft inner sheen
     const sh = X.createLinearGradient(0, 720, 0, 1080);
-    sh.addColorStop(0, 'rgba(255,255,255,0.16)'); sh.addColorStop(0.5, 'rgba(255,255,255,0)'); sh.addColorStop(1, 'rgba(0,0,40,0.12)');
+    sh.addColorStop(0, `rgba(255,255,255,${0.16 * (1 - wm)})`); sh.addColorStop(0.5, 'rgba(255,255,255,0)'); sh.addColorStop(1, `rgba(0,0,40,${0.12 * (1 - wm) + 0.04})`);
     X.fillStyle = sh; X.fill();
     if (m < 1) { // keep the blob's glossy read while it is still round
       const gs = X.createRadialGradient(540 - 60, 960 - 70, 0, 540, 960, 200);
-      gs.addColorStop(0, `rgba(210,250,255,${0.75 * (1 - m)})`); gs.addColorStop(0.45, `rgba(110,210,255,${0.35 * (1 - m)})`); gs.addColorStop(1, 'rgba(60,100,255,0)');
+      gs.addColorStop(0, `rgba(220,238,255,${0.75 * (1 - m)})`); gs.addColorStop(0.45, `rgba(124,183,249,${0.35 * (1 - m)})`); gs.addColorStop(1, 'rgba(18,91,235,0)');
       X.fillStyle = gs; X.fill();
     }
     X.restore();
-    G.save(); G.globalAlpha = appear * (0.3 + 0.6 * fl); G.fillStyle = C.logo; pathPts(G, pts); G.fill(); G.restore();
+    G.save(); G.globalAlpha = appear * (0.3 * (1 - wm) + 0.6 * fl); G.fillStyle = C.logo; pathPts(G, pts); G.fill(); G.restore();
     // energy trace around the mark
     const tr = prog(t, 27.0, 28.0);
     if (tr > 0 && tr < 1) {
@@ -869,13 +894,14 @@
         const e = eoc(prog(wa, dc * 0.045, dc * 0.045 + 0.7));
         if (e > 0.003) {
           X.globalAlpha = e; const bl = (1 - e) * 10; X.filter = bl > 0.3 ? `blur(${bl.toFixed(1)}px)` : 'none';
-          X.fillStyle = '#F1F5FF'; X.fillText(c, px, 1300 + (1 - e) * 16);
+          X.shadowColor = 'rgba(0,7,58,0.25)'; X.shadowBlur = 24; X.shadowOffsetY = 6;
+          X.fillStyle = '#FFFFFF'; X.fillText(c, px, 1300 + (1 - e) * 16);
         }
         px += widths[i];
       });
       X.restore();
     }
-    textLine([['business@sorasystems.tech', 's']], 540, 1378, 38, 28.5, 99, t, { alpha: 0.72, stagger: 0 });
+    textLine([['business@sorasystems.tech', 's']], 540, 1378, 38, 28.5, 99, t, { alpha: 0.9, stagger: 0, wt: 400 });
   }
 
   // ======================================================================
@@ -895,12 +921,13 @@
       X.clip();
       lightBackground(t);
       // hide glow layer inside the light area
-      G.save(); G.beginPath(); G.arc(...WIPE_C, lr, 0, TAU); if (dr > 0) G.arc(...WIPE_C, dr, 0, TAU, true); G.fillStyle = '#000'; G.fill(); G.restore();
+      G.save(); G.beginPath(); G.arc(...WIPE_C, lr, 0, TAU); if (dr > 0) G.arc(...WIPE_C, dr, 0, TAU, true); G.fillStyle = '#000'; G.fill(); G.clip(); G.globalAlpha = 0.45;
       sLoop(t);
+      G.restore();
       X.restore();
       // glowing wipe edges
-      if (lr < 1180) both((x) => { x.strokeStyle = rgba(C.cyan, 0.5 * (1 - lr / 1180)); x.lineWidth = 3; circle(x, ...WIPE_C, lr); x.stroke(); }, 1);
-      if (dr > 0 && dr < 1180) both((x) => { x.strokeStyle = rgba(C.cobalt, 0.6 * (1 - dr / 1180)); x.lineWidth = 3; circle(x, ...WIPE_C, dr); x.stroke(); }, 1);
+      if (lr < 1180) both((x) => { x.strokeStyle = rgba('#96C5F8', 0.6 * (1 - lr / 1180)); x.lineWidth = 3; circle(x, ...WIPE_C, lr); x.stroke(); }, 1);
+      if (dr > 0 && dr < 1180) both((x) => { x.strokeStyle = rgba('#96C5F8', 0.6 * (1 - dr / 1180)); x.lineWidth = 3; circle(x, ...WIPE_C, dr); x.stroke(); }, 1);
     }
     // spark that carries the dark wipe
     if (t > 19.6 && t < 20.4) {
@@ -924,7 +951,7 @@
     X.restore();
     // vignette
     const v = X.createRadialGradient(540, 960, 500, 540, 960, 1250);
-    v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,0.38)');
+    v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,4,31,0.32)');
     X.fillStyle = v; X.fillRect(0, 0, W, H);
   }
 
