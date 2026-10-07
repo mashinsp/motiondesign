@@ -1,0 +1,35 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Sora Systems spec ad</title>
+<style>
+@font-face{font-family:"Inter";src:url(fonts/Inter-VF.woff2) format("woff2");font-weight:100 900;}
+@font-face{font-family:"JetBrains Mono";src:url(fonts/JetBrainsMono-VF.woff2) format("woff2");font-weight:100 800;}
+@font-face{font-family:"Archivo";src:url(fonts/Archivo-VF.woff2) format("woff2");font-weight:100 900;font-stretch:62% 125%;}
+@font-face{font-family:"Open Sans";src:url(fonts/OpenSans-VF.woff2) format("woff2");font-weight:300 800;font-stretch:75% 100%;}
+html,body{margin:0;background:#000;overflow:hidden}
+canvas{display:block}
+</style></head>
+<body><canvas id="c"></canvas>
+<script src="tl.js"></script>
+<script src="mark.js"></script>
+<script>
+(async () => {
+  await Promise.all([
+    document.fonts.load('400 20px "Inter"'), document.fonts.load('600 20px "Inter"'),
+    document.fonts.load('400 14px "JetBrains Mono"'), document.fonts.load('900 condensed 100px "Archivo"'),
+    document.fonts.load('400 30px "Open Sans"'),
+  ]);
+  await document.fonts.ready;
+  const s = document.createElement('script'); s.src = 'engine.js';
+  s.onload = () => { window.READY = true; };
+  document.body.appendChild(s);
+})();
+window.frameData = async (t) => {
+  window.render(t);
+  const c = document.getElementById('c');
+  const blob = await new Promise((r) => c.toBlob(r, 'image/png'));
+  const buf = new Uint8Array(await blob.arrayBuffer());
+  let s = ''; const CH = 0x8000;
+  for (let i = 0; i < buf.length; i += CH) s += String.fromCharCode.apply(null, buf.subarray(i, i + CH));
+  return btoa(s);
+};
+</script></body></html>
