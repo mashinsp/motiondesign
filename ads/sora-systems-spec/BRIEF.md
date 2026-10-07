@@ -1,22 +1,32 @@
-# SORA SYSTEMS — spec ad brief (v1, for approval)
+# SORA SYSTEMS — spec ad brief (v2, for approval)
+
+> **v2 changes (your answers):**
+> - **Services:** AI Transformation · Cloud · Agentic AI · Custom Software, so **four** agent cards instead of three.
+> - **Logo:** your official `SORA_LOGO.pdf` is a clean vector. The mark is extracted to `assets_in/sora_mark.svg`, and its brand blue is **#0030FD**.
+> - **Card content:** my call. Each card shows code written for its service (§8).
+> - **Voice:** none. Like the reference, the film is **music + SFX only**.
+> - **Build:** runs here in the cloud.
+> - **Brand:** your own, so no "spec ad / not affiliated" line and no "made by" credit. The end card carries your contact.
+> - **Two items still need your OK:** the SFX source and the fonts. See `ASSETS.md`.
 
 **Brand:** SORA SYSTEMS · **Slogan:** "Intelligent Technology Built For Real Impact"
 **Reference:** `ScreenRecording_10-07-2026_10-43-40_1.mov` (Cursor spec ad, "Ship while you sleep.", made by Riccardo Bosso), matched beat for beat.
 **Length:** 18.0 s film + 3.0 s end card = **21.0 s** · 60 fps · 16:9 master, plus a 9:16 re-layout.
-**Status:** brief only. Nothing is built or downloaded and no credits are spent until you say go.
+**Concept:** Idea A, "Overnight".
+**Status:** brief + assets list awaiting your OK. Nothing is built or downloaded.
 
 ---
 
-## 0. Blockers: I need these from you before I can build
+## 0. Your answers (resolved)
 
-| # | What | Why |
-|---|------|-----|
-| 1 | **What Sora Systems actually sells.** The 3–4 real services or workflows you deliver (e.g. "lead qualification agents", "invoice reconciliation"). | `sorasystems.tech` doesn't resolve from here, and a web search only finds OpenAI's Sora. The cards in the ad show work Sora does, so per your rules those tasks have to be real, not invented. |
-| 2 | **Official logo vector** (SVG/PDF/AI) from your press kit. | So far I only have your PNG/WebP. I traced a clean vector from it in the last film, but the official file is the rule. |
-| 3 | **Real product UI, if any exists** (dashboard or run-log screenshots). | The reference shows real-looking product cards. If there's no UI, I'll build the agent cards in code from your confirmed services (see §8). |
-| 4 | **Voice pick** (see §5). | Jessica, Lauren and Siren aren't available from this session. |
-| 5 | **Where to run the build** (see §10). | This session is a cloud container. It can't reach `~/Desktop`, your SSD SFX library, SF Pro or DaVinci Resolve on your Mac. |
-| 6 | **Is SORA SYSTEMS your own brand?** | If yes, I drop the reference's "Spec ad · not affiliated with…" line. The end card in §3 then carries your contact instead of a "made by" credit. |
+| # | Item | Answer |
+|---|------|--------|
+| 1 | Services | AI Transformation, Cloud, Agentic AI, Custom Software |
+| 2 | Logo | `SORA_LOGO.pdf` → `assets_in/sora_mark.svg` (single vector path, #0030FD) |
+| 3 | Product UI | My call: code-built agent cards, one per service (§8) |
+| 4 | Voice | None. Music + SFX only, like the reference |
+| 5 | Build location | This cloud session |
+| 6 | Own brand | Yes: no disclaimer, end card = your contact |
 
 ---
 
@@ -57,10 +67,10 @@ Analysis files are in `ref_analysis/`: a contact sheet at 0.5 s, 0.1 s strips of
 
 ---
 
-## 2. Three ideas (I recommend **A**)
+## 2. Three ideas (**A is locked in** unless you say otherwise)
 
 **A — "Overnight" ★ recommended (matches the reference exactly).**
-Midnight. Your team logs off and Sora's agents take the night shift. Three cards run your real workflows while the clock races to 07:00, then everything lands as one approved stack. One tap on **"Approve all"** launches the brand reveal.
+Midnight. Your team logs off and Sora's agents take the night shift. Four cards (AI Transformation, Cloud, Agentic AI, Custom Software) run their work while the clock races to 07:00, then everything lands as one approved stack. One tap on **"Approve all"** launches the brand reveal.
 *Why:* it uses every beat of the reference 1:1, and the only claims are the services you confirm.
 
 **B — "Real Impact".**
@@ -84,58 +94,39 @@ Timings are retimed from the reference (×≈1.3) so the big hits land on bar li
 | **1.00** | **FLASH**: full-frame bloom plus horizontal anamorphic streak | 2-frame peak, 0.4 s decay | **Impact hit + sub boom** |
 | 1.00–2.00 | **Sora mark** revealed in the burst (official vector, white with glow). Shockwave rings run off-frame and sparks radiate | Rings ease out, sparks with motion blur | Shockwave whoosh, spark sizzle, reverb tail |
 | 2.00–2.40 | Sparks pulled back into the mark | Inward radial streaks | Reverse whoosh |
-| **2.40–2.90** | Mark **splits into three** and slides left and right | Smears, chromatic edge, heavy motion blur | Double whoosh plus 3 ticks on landing |
-| **3.00–3.40** | The three marks unfold into **three glass agent cards**. Clock pill fades in: **"11:58 PM"** | Cards flip open with a soft spring | 3 card-landing hits (UI thunk), clock tick |
-| 3.40–8.00 | **Night shift time-lapse.** Each card writes its run log with a glowing comet cursor (one per confirmed service, see §8). The clock races 11:58 PM → 06:59 AM. **Push-in to the middle card at 5.0–6.4, pull back at 6.4–7.0** | Typing, scrolling lines, status spinner; camera dolly with depth blur on the side cards | Clock-tick pulse (music), keyboard/data ticks per line, push-in whoosh, pull-back whoosh. **VO 1 + VO 2** |
-| **8.00** | Clock lands on **07:00 AM**, pill glows. Status chips turn green ✓ with real counts (from §0.1) | Pill pulse, chip pops staggered 0.08 s | Chime/ding, 3 chip pops |
+| **2.40–2.90** | Mark **splits into four** (two left, two right) | Smears, chromatic edge, heavy motion blur | Double whoosh plus 4 ticks on landing |
+| **3.00–3.40** | The four marks unfold into **four glass agent cards** (AI Transformation, Cloud, Agentic AI, Custom Software). Clock pill fades in: **"11:58 PM"** | Cards flip open with a soft spring, 0.06 s stagger | 4 card-landing hits (UI thunk), clock tick |
+| 3.40–8.00 | **Night shift time-lapse.** Each card writes its code with a glowing comet cursor (§8). The clock races 11:58 PM → 06:59 AM. **Push-in to the Agentic AI card at 5.0–6.4, pull back at 6.4–7.0** | Typing, scrolling lines, status spinner; camera dolly with depth blur on the other cards | Clock-tick pulse (music), keyboard/data ticks per line, push-in whoosh, pull-back whoosh |
+| **8.00** | Clock lands on **07:00 AM**, pill glows. Status chips turn green ✓ (§8) | Pill pulse, chip pops staggered 0.08 s | Chime/ding, 4 chip pops |
 | 8.25–8.90 | Cards **collapse into one stack** | Slide-in with offset layers | Whoosh into stack, soft thud |
-| **9.00–9.60** | **Glowing checkmark** draws over the stack | Stroke draw with comet head and bloom | Swipe plus **hit** on stroke end. **VO 3** |
+| **9.00–9.60** | **Glowing checkmark** draws over the stack | Stroke draw with comet head and bloom | Swipe plus **hit** on stroke end |
 | 10.00–10.60 | **"Approve all"** pill appears, an arrow cursor glides in | Pill rises, cursor eases | UI pop, cursor slide |
 | **10.75** | **Click**, glow ring pulse | Ring expands and fades | **Click + hit** |
-| 10.90–11.70 | Stack blurs away; **three comets** (mini Sora marks) peel off and arc around the frame | Arcs with long tails, motion blur | 3 pitched whooshes (L, C, R pan) |
-| 11.70–12.00 | Comets converge into a tiny triple-mark, then **near-silence** | | **Suck/reverse, then a gap** |
-| **12.00** | **HORIZON FLARE**: blinding horizontal line, Sora mark on the horizon, blue haze band (#0B45D7 → #96C5F8) | Line flash, then settles with dust drifting | **BIG HIT + sub drop**; music lifts from minor to major |
+| 10.90–11.70 | Stack blurs away; **four comets** (mini Sora marks, one per service) peel off and arc around the frame | Arcs with long tails, motion blur | 4 pitched whooshes (panned L → R) |
+| 11.70–12.00 | Comets converge into one tiny mark, then **near-silence** | | **Suck/reverse, then a gap** |
+| **12.00** | **HORIZON FLARE**: blinding horizontal line, Sora mark (white, #0030FD glow) on the horizon, blue haze band (#0B45D7 → #96C5F8) | Line flash, then settles with dust drifting | **BIG HIT + sub drop**; music lifts from minor to major |
 | 12.00–13.00 | Glow settles, slow push | | Tail, airy pad |
 | **13.00–13.60** | Mark slides left; **SORA SYSTEMS** wordmark wipes in from the right with a light sweep | Mask wipe, specular sweep | Whoosh plus shimmer on the sweep |
-| **13.80–14.40** | Slogan rises under the wordmark: **Intelligent Technology Built For Real Impact** | Kinetic type, word by word, blur → sharp | Soft tick per word (very low). **VO 4** |
+| **13.80–14.40** | Slogan rises under the wordmark: **Intelligent Technology Built For Real Impact** | Kinetic type, word by word, blur → sharp | Soft tick per word (very low) |
 | 14.40–17.50 | Hold, slow push, dust drift | | Pad, final chord |
 | 17.50–18.00 | Everything collapses into one horizontal line | | Reverse swell |
-| **18.00–21.00** | **End card**: the line blooms into an oval glow showing **business@sorasystems.tech** (plus a URL if your site goes live) | Soft fade/rise | Logo sting tail, gentle last hit at 18.0, fade |
+| **18.00–21.00** | **End card**: the line blooms into an oval glow showing the small mark + **business@sorasystems.tech** | Soft fade/rise | Logo sting tail, gentle last hit at 18.0, fade |
 
 **9:16 version (1080×1920):**
-- The three cards stack vertically and zoom one at a time during the time-lapse.
+- The four cards sit in a 2×2 grid, and the push-in lands on the Agentic AI card.
 - The clock sits at the top; the horizon flare stays horizontal across the middle.
 - The wordmark sits under the mark, not beside it.
-- Captions are larger, inside a 1080×1420 safe area so Reels/TikTok UI doesn't cover them.
+- All text stays inside a 1080×1420 safe area so Reels/TikTok UI doesn't cover it.
 
 ---
 
-## 4. Script — Idea A (VO, 33 words)
+## 4. On-screen copy (no VO)
 
-| Time | Line | Words |
-|---|---|---|
-| 3.2–4.9 | "Midnight. Your team logs off." | 5 |
-| 5.2–7.8 | "Sora doesn't. *[service 1]*. *[service 2]*. *[service 3]*." e.g. "Leads qualified. Invoices reconciled. Tickets closed." (only once you confirm these are real) | ~9 |
-| 8.2–10.4 | "By seven, the work is done… and waiting for your yes." | 11 |
-| 13.6–16.6 | "Sora Systems. Intelligent technology, built for real impact." | 8 |
-
-Tone: calm, close-mic, confident, no hype. The VO stays out of the hit at 12.00 and the click at 10.75, so the picture carries those moments.
-
----
+The story reads from the picture, exactly like the reference: the clock (11:58 PM → 07:00 AM), the four card titles and their code, the ✓ chips, the **"Approve all"** button, then **SORA SYSTEMS**, **Intelligent Technology Built For Real Impact**, and **business@sorasystems.tech**. No supers beyond that, so it stays as clean as the reference.
 
 ## 5. Voice
 
-Jessica, Lauren and Siren are **not available from this session**. My guess is they live in your usual TTS provider (ElevenLabs?), and there's no connector or API key for it here. Options:
-
-1. **Your usual voice:** add your provider's API key to this cloud environment's settings (environment menu in the session title bar → Edit, under Network secrets or as an env var such as `ELEVENLABS_API_KEY`). A new session picks it up. Don't paste the key in chat.
-2. **Higgsfield voices, reachable here** (costs credits, only after your go). Calm, premium candidates:
-   - female: **Sienna, Sloane, Vesper, Imogen**
-   - male: **Harrison, Sterling, Julian**
-
-   You can preview any of them before I generate.
-3. **Your own recording:** you send a WAV and I cut the edit to it.
-
-My pick for Idea A is a **female, low-mid, unhurried read** (Sloane or Vesper style), which fits "night shift / calm control".
+None (your call). The music fills the space the VO would have taken (§6).
 
 ---
 
@@ -148,17 +139,14 @@ My pick for Idea A is a **female, low-mid, unhurried read** (Sloane or Vesper st
 - **Bar 6 (10–12 s):** a riser builds and **cuts to near-silence at 11.7**.
 - **Bar 7 (12.0):** **lift to E♭ major.** Wide pad, sub drop and shimmer on the horizon hit.
 - **Bars 8–9 (14–18 s):** the brand chord holds under the tagline, then it resolves on the end card.
-- **Mixed around the VO:**
-  - Music sits **≥15 dB under the VO** while words are spoken, using sidechain ducking keyed from the VO (50 ms look-ahead, 250 ms release).
-  - A 1–4 kHz dip on the music bus during VO.
-  - **No limiter on the VO**; the master limiter is set to ≤1 dB of gain reduction in VO passages, and I log it.
+- **No VO, so no ducking.** The mix is built like the reference: mono-leaning centre, with width only on the pads and the horizon hit.
 - **Master:** −14 LUFS integrated / −1 dBTP (true-peak measured at 4× oversampling).
 
 ---
 
-## 7. SFX plan (all from *FOUR Editors Sound Effects* on your SSD)
+## 7. SFX plan (source needs your OK: see `ASSETS.md`)
 
-Every cue gets placed to the frame and EQ'd so it doesn't clash with the VO. Nothing gets removed.
+Every cue gets placed to the frame and EQ'd to sit with the music. Nothing gets removed.
 
 | Cue | Time | Library category |
 |---|---|---|
@@ -167,8 +155,8 @@ Every cue gets placed to the frame and EQ'd so it doesn't clash with the VO. Not
 | **Flash hit** | 1.00 | Cinematic impact + sub boom |
 | Shockwave, sparks | 1.00–2.00 | Whoosh (wide), sparkle/sizzle |
 | Spark suck | 2.00 | Reverse whoosh |
-| Split ×3 | 2.40–2.90 | Fast whooshes + UI ticks |
-| Cards unfold ×3 | 3.00–3.40 | UI thunk/pop, glass |
+| Split ×4 | 2.40–2.90 | Fast whooshes + UI ticks |
+| Cards unfold ×4 | 3.00–3.40 | UI thunk/pop, glass |
 | Clock | 3.40–8.00 | Clock tick (light, rhythmic) |
 | Typing/data per line | 3.40–8.00 | Keyboard/digital data blips (low level) |
 | Push-in / pull-back | 5.00 / 6.40 | Camera whoosh |
@@ -177,7 +165,7 @@ Every cue gets placed to the frame and EQ'd so it doesn't clash with the VO. Not
 | Checkmark | 9.00–9.60 | Swipe + hit |
 | Button / cursor | 10.00 | UI pop, cursor glide |
 | **Click** | 10.75 | Mouse click + hit |
-| Comets ×3 | 10.90–11.70 | Pitched whooshes (panned L/C/R) |
+| Comets ×4 | 10.90–11.70 | Pitched whooshes (panned L → R) |
 | Suck to silence | 11.70 | Reverse/suck |
 | **Horizon hit** | 12.00 | Big impact + sub drop + shimmer |
 | Wordmark sweep | 13.00 | Whoosh + shimmer |
@@ -189,12 +177,12 @@ Every cue gets placed to the frame and EQ'd so it doesn't clash with the VO. Not
 
 ## 8. Look
 
-- **Type:**
-  - **SF Pro Display** for the wordmark lockup, tagline and card titles.
-  - **SF Mono** for run logs.
-  - The SORA SYSTEMS wordmark uses the official file if one exists in the press kit; otherwise it's set in SF Pro Display Semibold with tracking.
+- **Type** (needs your OK, see `ASSETS.md`):
+  - **Inter Display** stands in for SF Pro Display: wordmark, tagline, card titles.
+  - **JetBrains Mono** stands in for SF Mono: card code.
+  - **SORA SYSTEMS** is set in Inter Display Semibold with wide tracking. Your PDF has the mark only, no wordmark.
 - **Palette:**
-  - Stage: navy end of your ramp, #00073A → #000B4D, with a slowly drifting **brand-blue glow** (#0050FF / #0B45D7) instead of the reference's orange.
+  - Stage: navy end of your ramp, #00073A → #000B4D, with a slowly drifting **brand-blue glow** (logo blue **#0030FD**, plus #0B45D7) instead of the reference's orange.
   - Highlights: #96C5F8 and white.
   - Success chips: green, the only non-blue accent, as in the reference.
 - **Finish:**
@@ -202,44 +190,23 @@ Every cue gets placed to the frame and EQ'd so it doesn't clash with the VO. Not
   - **Heavy motion blur** from sub-frame accumulation on every fast move; light grain against banding.
 - **Motion-graphics layer:** floating dust, card-edge light sweeps, tiny progress bars and status spinners, count-up chips, clock digits flipping. Something is always moving.
 - **New moves only:** no circle wipes, metaballs, loop pills or memory-card stacks from the last film.
-- **Card content (Idea A):** three cards, one per confirmed service. Each has:
-  - title, e.g. "Qualify inbound leads";
-  - status, e.g. "Scoring 214 leads…";
-  - a run log in SF Mono showing tool calls, e.g. `crm.search(…)`, `email.draft(…)`;
-  - footer chip, e.g. "✓ 214/214".
-
-  All text comes from what you confirm in §0.1, nothing invented.
-- **Photos:** none needed. The reference is pure motion graphics, so there are **no Unsplash/Pexels downloads**. `assets_in/CREDITS.md` will still log the fonts, logo source, voice and SFX files.
+- **Card content:** four cards, one per service, each writing code for that service. This is illustrative work, with no performance or SLA claims. Full copy is in `ASSETS.md` §B for your OK.
+- **Photos:** none needed. The reference is pure motion graphics, so there are **no Unsplash/Pexels downloads**. `assets_in/CREDITS.md` will still log the fonts, logo source and SFX files.
 
 ---
 
-## 9. Assets list (needs your OK before anything is downloaded or copied)
+## 9. Assets list
 
-| Asset | Source | Status |
-|---|---|---|
-| Sora Systems logo (vector) | Your press kit | **Needed** (PNG traced as fallback only) |
-| Wordmark file (if one exists) | Your press kit | Needed / optional |
-| SF Pro Display + SF Mono | Your Mac (`/Library/Fonts` or Apple Developer download) | Needed if the build runs in the cloud |
-| Service list + real numbers for the chips | You | **Needed** |
-| Product UI screenshots | You | Optional |
-| VO | Voice option from §5 | Needs pick |
-| SFX | `/Volumes/Extreme Pro/EDITING PACK/FOUR Editors Sound Effects` | Copied in at build start (SSD must be plugged in) |
-| Music | Made in code | n/a |
-| Stock photos | None | n/a |
+See **`ASSETS.md`** (step 2, needs your OK before anything is downloaded or copied).
 
----
+## 10. Where to build
 
-## 10. Where to build: needs your call
-
-This session runs in a **cloud container**, so it can't reach your Mac. That means no `~/Desktop`, no SSD SFX library, no SF Pro and no DaVinci Resolve API. I put this brief in the repo instead: `ads/sora-systems-spec/BRIEF.md`.
-
-- **Option 1 (recommended):** continue in a session on your Mac, either the Claude Desktop app or `claude remote-control` in a terminal in this repo's folder, which then shows up in the Claude Code app. That gets everything: Desktop, SSD, SF Pro, Resolve.
-- **Option 2:** stay in the cloud. You upload the SFX you want (or a zip of the pack) plus the SF Pro/SF Mono files and the logo SVG into the repo, and I deliver files here for you to pull.
+Here, in this cloud session (your call). Deliverables land in the repo under `ads/sora-systems-spec/out/` and are pushed to the branch.
 
 ## 11. Order of work (after your OK)
 
-1. ✅ Brief (this file) → your OK
-2. Assets list (§9) → your OK, then copy/download and log everything in `assets_in/CREDITS.md`
+1. ✅ Brief → answers received (v2)
+2. **Assets list (`ASSETS.md`) → your OK**, then copy/download and log everything in `assets_in/CREDITS.md`
 4. **Preview v1 (16:9)** + contact sheet → your feedback → repeat until approved
-5. Finals: 16:9 + 9:16, stems (VO / music / SFX), README
+5. Finals: 16:9 + 9:16, stems (music / SFX by category), README
 6. DaVinci Resolve full project **only if you ask** (and I'll remind you to set playback to 60 fps)
