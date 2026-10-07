@@ -6,6 +6,7 @@
   const FMT = new URLSearchParams(location.search).get('fmt') || '169';
   const V = FMT === '916';
   const W = V ? 1080 : 1920, H = V ? 1920 : 1080;
+  const SS = +(new URLSearchParams(location.search).get('ss') || 1);   // 2 = 4K
 
   // ---------- layout ----------
   const L = V ? {
@@ -32,15 +33,15 @@
   const C = { brand: '#0030FD', royal: '#0B45D7', sky: '#7CB7F9', pale: '#9CC2FF', ice: '#EEF2FA', green: '#5BD69A' };
 
   // ---------- canvases ----------
-  const out = document.getElementById('c'); out.width = W; out.height = H;
+  const out = document.getElementById('c'); out.width = W * SS; out.height = H * SS;
   const octx = out.getContext('2d');
   const mk = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
-  const scene = mk(W, H), X = scene.getContext('2d');
+  const scene = mk(W * SS, H * SS), X = scene.getContext('2d');
   const glow = mk(W / 2, H / 2), G = glow.getContext('2d');
   const b1 = mk(W / 8, H / 8), B1 = b1.getContext('2d');
   const b2 = mk(W / 16, H / 16), B2 = b2.getContext('2d');
   const b3 = mk(Math.round(W / 32), Math.round(H / 32)), B3 = b3.getContext('2d');
-  const cardCv = CARDS.map(() => mk(1400, 1720));
+  const cardCv = CARDS.map(() => mk(Math.ceil(1400 * SS), Math.ceil(1720 * SS)));
     const MARK = new Path2D(MARK_D);
   const MARK_BOX = { x: 265.09, y: 145.52, w: 547.27, h: 788.96 };
 
@@ -304,15 +305,15 @@
     }
     // split: blown-out orb → wide bar → logos travel out along a streak
     if (t >= T.split && t < T.textIn[0]) {
-      const ob = 1 - eoc(prog(t, T.split, T.spread[0] + 0.04));
+      const ob = 1 - eio(prog(t, T.split, T.spread[0] + 0.14));
       if (ob > 0.01) {
-        const bar = eoc(prog(t, T.split + 0.01, T.spread[0]));
+        const bar = eio(prog(t, T.split + 0.01, T.spread[0] + 0.06));
         X.save(); X.translate(cx, cy); X.scale(1 + 3.5 * bar, 1);
         glowDot(0, 0, 34, '#9CC2FF', ob, 3.5); X.restore();
         for (const x of [X, G]) { const lg = x.createLinearGradient(0, 0, W, 0); lg.addColorStop(0, 'rgba(160,205,255,0)'); lg.addColorStop(0.5, `rgba(255,255,255,${ob})`); lg.addColorStop(1, 'rgba(160,205,255,0)'); x.fillStyle = lg; x.fillRect(0, cy - 2, W, 4); }
       }
-      const u = eoq(prog(t, T.spread[0], T.spread[1]));
-      const trail = 1 - eoc(prog(t, T.spread[1] - 0.04, T.outline[0] + 0.04));
+      const u = eio(prog(t, T.spread[0], T.spread[1]));
+      const trail = 1 - eio(prog(t, T.spread[1] - 0.15, T.outline[0] + 0.25));
       for (let i = 0; i < 4; i++) {
         const [tx, ty] = L.cards[i];
         const px = lerp(cx, tx, u), py = lerp(cy, ty, u);
@@ -331,9 +332,9 @@
   function cardMorph(i, t, px, py) {
     const S = L.cardW, Hc = CH * CS;
     const [cx, cy] = L.cards[i];
-    const o = eoc(prog(t, T.outline[0], T.outline[1]));
+    const o = eio(prog(t, T.outline[0], T.outline[1]));
     const f = eio(prog(t, T.fill[0], T.fill[1]));
-    const st = eoc(prog(t, T.stretch[0], T.stretch[1]));
+    const st = eios(prog(t, T.stretch[0], T.stretch[1]));
     const mh0 = L.splitMarkH;
     const side = lerp(mh0 * 1.25, S, o);
     const w = side, h = lerp(side, Hc, st);
@@ -391,7 +392,7 @@
     if (t < T.textIn[0] || t > T.merge[1] + 0.02) return;
     const c = cam(t);
     // clock pill
-    const ca = eoc(prog(t, T.clockIn, T.clockIn + 0.12)) * (1 - eoc(prog(t, T.merge[0], T.merge[0] + 0.15)));
+    const ca = eios(prog(t, T.clockIn, T.clockIn + 0.3)) * (1 - eoc(prog(t, T.merge[0], T.merge[0] + 0.15)));
     if (ca > 0.003) {
       const lift = eio(prog(t, T.stack[0], T.stack[1])) * L.clockLift;
       const p = toScreen([CX0, L.clockY - lift], c), z = c.z * (V ? 1.35 : 1.12);
@@ -406,7 +407,7 @@
       X.fillStyle = '#F2F5FF'; X.textAlign = 'left'; X.textBaseline = 'middle'; X.fillText(txt, ix + 16, 1); X.restore();
       if (morn) { G.save(); G.translate(p[0], p[1]); G.scale(z, z); G.globalAlpha = ca * (0.8 + 0.6 * Math.exp(-(t - T.morning) / 0.5)); G.strokeStyle = '#FFD68C'; G.lineWidth = 5; rrect(G, -w / 2, -h / 2, w, h, h / 2); G.stroke(); G.restore(); }
     }
-    const ta = eoc(prog(t, T.textIn[0], T.textIn[1]));
+    const ta = eios(prog(t, T.textIn[0], T.textIn[1]));
     const stacking = t >= T.stack[0];
     const mg = prog(t, T.merge[0], T.merge[1]);
     const states = CARDS.map((_, i) => [i, cardState(i, t)]);
@@ -415,23 +416,23 @@
       if (mg > 0 && i !== FOCUS_CARD && mg > 0.15) continue;   // back layers vanish as the merge starts
       const flash = t >= T.done[i] ? Math.exp(-(t - T.done[i]) / 0.25) : 0;
       const sc = toScreen([s.x, s.y], c);
-      const R = Math.min(3.65, CS * s.s * c.z);
+      const R = Math.min(3.65, CS * s.s * c.z) * SS;
       const { pw, ph, cursor } = drawCard(i, t, R, flash, ta * (1 - eoc(prog(mg, 0.1, 0.6))));
-      const dw = CW * R, dh = CH * R;
+      const dw = CW * R / SS, dh = CH * R / SS;
       const dof = i === FOCUS_CARD ? 0 : c.k * 6;
       X.save(); X.translate(sc[0], sc[1]); X.rotate(s.rot);
       X.globalAlpha = 0.5;
       const sh = X.createRadialGradient(0, dh * 0.08, 0, 0, dh * 0.08, Math.max(dw, dh) * 0.7);
       sh.addColorStop(0, 'rgba(0,4,40,0.7)'); sh.addColorStop(1, 'rgba(0,4,40,0)'); X.fillStyle = sh; X.fillRect(-dw, -dh, dw * 2, dh * 2);
       X.globalAlpha = mg > 0 ? lerp(1, 0.28, eoc(prog(mg, 0, 0.3))) * (1 + 0.6 * Math.sin(mg * 60) * (mg < 0.15 ? 1 : 0)) : 1;
-      if (dof > 0.3) X.filter = `blur(${dof.toFixed(1)}px)`;
-      X.drawImage(cardCv[i], 0, 0, pw, ph, -dw / 2, -dh / 2, pw, ph);
+      if (dof > 0.3) X.filter = `blur(${((dof) * SS).toFixed(1)}px)`;
+      X.drawImage(cardCv[i], 0, 0, pw, ph, -dw / 2, -dh / 2, pw / SS, ph / SS);
       X.restore();
       // emissive rim; stack top-edge highlight; merge wireframe edge
       const hiTop = i === FOCUS_CARD ? Math.exp(-Math.pow((t - 7.63) / 0.04, 2)) : 0;
       G.save(); G.translate(sc[0], sc[1]); G.rotate(s.rot);
       G.globalAlpha = 0.18 + 0.85 * flash + (mg > 0 ? 0.7 * (1 - mg) : 0); G.strokeStyle = flash > 0.05 || mg > 0 ? '#FFFFFF' : '#7FA6FF'; G.lineWidth = 2.5;
-      rrect(G, -dw / 2, -dh / 2, dw, dh, 18 * R); G.stroke();
+      rrect(G, -dw / 2, -dh / 2, dw, dh, 18 * R / SS); G.stroke();
       if (hiTop > 0.01) { G.globalAlpha = hiTop; G.fillStyle = '#FFFFFF'; G.fillRect(-dw / 2 + 20, -dh / 2 - 2, dw - 40, 4); X.save(); X.translate(sc[0], sc[1]); X.globalAlpha = hiTop; X.fillStyle = '#FFFFFF'; X.fillRect(-dw / 2 + 20, -dh / 2 - 1, dw - 40, 2); X.restore(); }
       G.restore();
       if (mg > 0 && i === FOCUS_CARD) { // white-edged selection box shrinking to the top-left
@@ -442,11 +443,11 @@
         X.fillStyle = 'rgba(200,225,255,0.12)'; X.fillRect(bx0, by0, bw, bh);
       }
       if (cursor && t < T.done[i] && ta > 0.9 && !stacking) {
-        const cxp = sc[0] - dw / 2 + cursor[0] * R, cyp = sc[1] - dh / 2 + cursor[1] * R;
-        const tl = 46 * R;
+        const Rs = R / SS, cxp = sc[0] - dw / 2 + cursor[0] * Rs, cyp = sc[1] - dh / 2 + cursor[1] * Rs;
+        const tl = 46 * Rs;
         const tg = X.createLinearGradient(cxp - tl, 0, cxp, 0); tg.addColorStop(0, 'rgba(180,215,255,0)'); tg.addColorStop(1, 'rgba(245,250,255,0.95)');
-        X.fillStyle = tg; X.fillRect(cxp - tl, cyp - 1.6 * R, tl, 3.2 * R);
-        glowDot(cxp, cyp, 3.4 * R, '#CFE3FF', 1, 4);
+        X.fillStyle = tg; X.fillRect(cxp - tl, cyp - 1.6 * Rs, tl, 3.2 * Rs);
+        glowDot(cxp, cyp, 3.4 * Rs, '#CFE3FF', 1, 4);
       }
     }
     // checkmark: orb → short stroke → long stroke, left as a glowing outline
@@ -475,7 +476,7 @@
       const bs = (V ? 1.4 : 1.2) * lerp(0.94, 1, bi) * press;
       X.save(); X.translate(bx, by); X.scale(bs, bs); X.globalAlpha = bi * gone;
       X.font = INTER(19, 600); const w = X.measureText('Approve all').width + 70, h = 54;
-      X.shadowColor = 'rgba(0,6,50,0.5)'; X.shadowBlur = 26; X.shadowOffsetY = 8;
+      X.shadowColor = 'rgba(0,6,50,0.5)'; X.shadowBlur = 26 * SS; X.shadowOffsetY = 8 * SS;
       X.fillStyle = '#080B0B'; rrect(X, -w / 2, -h / 2, w, h, h / 2); X.fill(); X.shadowColor = 'transparent';
       X.fillStyle = '#F2F5F2'; X.textAlign = 'left'; X.textBaseline = 'middle'; X.fillText('Approve all', -w / 2 + 26, 1);
       X.strokeStyle = '#F2F5F2'; X.lineWidth = 2.2; X.lineCap = 'round'; X.lineJoin = 'round';
@@ -588,7 +589,7 @@
     const form = eoc(prog(t, 9.96, T.settle[1]));
     const mx = lerp(CX0, g.markX, sl), my = g.cy;
     const mh = g.mh * lerp(0.82, 1, form);
-    X.save(); X.globalAlpha = 1 - dis; if (blurAll > 0.3) X.filter = `blur(${blurAll.toFixed(1)}px)`;
+    X.save(); X.globalAlpha = 1 - dis; if (blurAll > 0.3) X.filter = `blur(${((blurAll) * SS).toFixed(1)}px)`;
     // dark glyph inside the flare, white mark forming around it
     if (form < 1) drawMark(X, mx, my, g.mh * 0.3, '#010948', 1 - form);
     drawMark(X, mx, my, mh, '#E8EDE9', form);
@@ -602,7 +603,7 @@
     if (sk > 0 && wr < 1) glowDot(headX, headY, 7, '#CFE3FF', 1, 6);
     else if (wr >= 1) glowDot(g.wordX + g.ww, g.cy, 7, '#CFE3FF', Math.exp(-(t - T.write[1]) / 0.08), 6);
     if (wr > 0) {
-      X.save(); X.globalAlpha = 1 - dis; if (blurAll > 0.3) X.filter = `blur(${blurAll.toFixed(1)}px)`;
+      X.save(); X.globalAlpha = 1 - dis; if (blurAll > 0.3) X.filter = `blur(${((blurAll) * SS).toFixed(1)}px)`;
       X.beginPath(); X.rect(g.wordX - 10, g.cy - g.mh, headX - g.wordX + 10, g.mh * 2); X.clip();
       X.font = `900 ${g.fs.toFixed(2)}px "Archivo"`; X.fontStretch = 'extra-condensed'; X.textBaseline = 'alphabetic'; X.textAlign = 'left';
       X.fillStyle = '#F7FAFC'; X.fillText('Sora Systems', g.wordX, g.base);
@@ -615,7 +616,7 @@
     // tagline: blur-in, split to the lockup edges (brand lockup)
     const tg = eoc(prog(t, T.tagline[0], T.tagline[1]));
     if (tg > 0) {
-      X.save(); X.globalAlpha = tg * (1 - dis); const bl = (1 - tg) * 8 + blurAll; if (bl > 0.3) X.filter = `blur(${bl.toFixed(1)}px)`;
+      X.save(); X.globalAlpha = tg * (1 - dis); const bl = (1 - tg) * 8 + blurAll; if (bl > 0.3) X.filter = `blur(${((bl) * SS).toFixed(1)}px)`;
       X.font = `500 ${g.tagFs.toFixed(1)}px "Inter"`; X.fillStyle = '#BADEF9'; X.textBaseline = 'alphabetic';
       X.textAlign = 'left'; X.fillText('Intelligent technology', g.left, g.tagY);
       X.textAlign = 'right'; X.fillText('Built for real impact', g.left + g.tot, g.tagY);
@@ -648,7 +649,7 @@
     else if (ew < 1) for (const x of [X, G]) { x.fillStyle = 'rgba(255,255,255,0.95)'; x.fillRect(Math.max(CX0 - lw / 2, tx0 + consumed), cy - lh / 2, CX0 + lw / 2 - Math.max(CX0 - lw / 2, tx0 + consumed), lh); }
     if (ew > 0) {
       X.save(); X.beginPath(); X.rect(tx0 - 4, cy - 60, consumed + 8, 120); X.clip();
-      X.shadowColor = 'rgba(1,9,72,0.35)'; X.shadowBlur = 18; X.textAlign = 'left'; X.textBaseline = 'middle'; X.fillStyle = '#FFFFFF';
+      X.shadowColor = 'rgba(1,9,72,0.35)'; X.shadowBlur = 18 * SS; X.textAlign = 'left'; X.textBaseline = 'middle'; X.fillStyle = '#FFFFFF';
       X.fillText('business@sorasystems.tech', tx0, cy + 2); X.restore();
       if (ew < 1) glowDot(tx0 + consumed, cy, 6, '#FFFFFF', 1, 5);
     }
@@ -657,7 +658,7 @@
     if (t >= T.cta[0]) {
       X.save(); X.translate(CX0, cy + L.ctaGap); X.scale(lerp(0.85, 1, cs) * (V ? 1.35 : 1.4), lerp(0.85, 1, cs) * (V ? 1.35 : 1.4)); X.globalAlpha = clamp(cs * 1.4);
       X.font = INTER(24, 600); const w = X.measureText('Book a 15-min call').width + 96, h = 60;
-      X.shadowColor = 'rgba(0,6,50,0.45)'; X.shadowBlur = 30; X.shadowOffsetY = 10;
+      X.shadowColor = 'rgba(0,6,50,0.45)'; X.shadowBlur = 30 * SS; X.shadowOffsetY = 10 * SS;
       X.fillStyle = '#080B0B'; rrect(X, -w / 2, -h / 2, w, h, h / 2); X.fill(); X.shadowColor = 'transparent';
       X.fillStyle = '#F2F5F2'; X.textAlign = 'left'; X.textBaseline = 'middle'; X.fillText('Book a 15-min call', -w / 2 + 32, 1);
       X.strokeStyle = '#F2F5F2'; X.lineWidth = 2.4; X.lineCap = 'round'; X.lineJoin = 'round';
@@ -670,7 +671,7 @@
   // compose
   // ======================================================================
   function drawSample(t) {
-    X.setTransform(1, 0, 0, 1, 0, 0); X.globalAlpha = 1; X.globalCompositeOperation = 'source-over'; X.filter = 'none';
+    X.setTransform(SS, 0, 0, SS, 0, 0); X.globalAlpha = 1; X.globalCompositeOperation = 'source-over'; X.filter = 'none';
     G.setTransform(1, 0, 0, 1, 0, 0); G.globalAlpha = 1; G.globalCompositeOperation = 'source-over'; G.fillStyle = '#000'; G.fillRect(0, 0, W / 2, H / 2);
     G.setTransform(0.5, 0, 0, 0.5, 0, 0);
     background(t);
@@ -678,7 +679,7 @@
     B1.filter = 'blur(2px)'; B1.clearRect(0, 0, b1.width, b1.height); B1.drawImage(glow, 0, 0, b1.width, b1.height);
     B2.filter = 'blur(3px)'; B2.clearRect(0, 0, b2.width, b2.height); B2.drawImage(b1, 0, 0, b2.width, b2.height);
     B3.filter = 'blur(3px)'; B3.clearRect(0, 0, b3.width, b3.height); B3.drawImage(b2, 0, 0, b3.width, b3.height);
-    X.save(); X.setTransform(1, 0, 0, 1, 0, 0); X.globalCompositeOperation = 'lighter'; X.imageSmoothingQuality = 'high';
+    X.save(); X.setTransform(SS, 0, 0, SS, 0, 0); X.globalCompositeOperation = 'lighter'; X.imageSmoothingQuality = 'high';
     X.globalAlpha = 0.25; X.drawImage(glow, 0, 0, W, H);
     X.globalAlpha = 0.45; X.drawImage(b1, 0, 0, W, H);
     X.globalAlpha = 0.5; X.drawImage(b2, 0, 0, W, H);

@@ -14,10 +14,10 @@ const { chromium } = require('playwright');
   const fmt = process.argv[3];
   const [W, H] = fmt === '916' ? [1080, 1920] : [1920, 1080];
   const browser = await chromium.launch({ args: ['--force-color-profile=srgb', '--disable-lcd-text'] });
-  const page = await browser.newPage({ viewport: { width: W, height: H } });
+  const page = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: 1 });
   page.on('pageerror', (e) => { console.error('PAGE ERROR', e.message); process.exit(1); });
   page.on('console', (m) => { if (m.type() === 'error') console.error('console:', m.text()); });
-  await page.goto('file://' + path.resolve(__dirname, 'index.html') + '?fmt=' + fmt);
+  await page.goto('file://' + path.resolve(__dirname, 'index.html') + '?fmt=' + fmt + '&ss=' + (process.env.SS || 1));
   await page.waitForFunction('window.READY === true', null, { timeout: 30000 });
   const write = async (t, file) => { const b64 = await page.evaluate((t) => window.frameData(t), t); fs.writeFileSync(file, Buffer.from(b64, 'base64')); };
   if (mode === 'frames') {

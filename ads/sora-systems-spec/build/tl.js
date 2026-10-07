@@ -23,8 +23,8 @@
 
   // ---------- beats (seconds) — reference timing ----------
   const T = {
-    burst: 0.82, logoIn: 0.90, spiral: [1.60, 1.78], split: 1.80, spread: [1.84, 2.00], outline: [2.02, 2.10],
-    fill: [2.12, 2.18], stretch: [2.18, 2.22], clockIn: 2.20, textIn: [2.22, 2.30],
+    burst: 0.82, logoIn: 0.90, spiral: [1.60, 1.78], split: 1.80, spread: [1.84, 2.30], outline: [2.10, 2.55],
+    fill: [2.45, 2.80], stretch: [2.78, 3.00], clockIn: 2.92, textIn: [2.95, 3.20],
     pushIn: [3.80, 3.94], pullOut: [4.82, 5.00], done: [5.90, 6.25, 6.60, 6.90], morning: 6.78,
     stack: [7.22, 7.78], check: [7.78, 8.40], btnIn: [8.36, 8.44], pointer: [8.80, 8.96], hover: [9.04, 9.12], click: 9.12,
     merge: [9.14, 9.40], comets: [9.36, 9.68], cut: 9.70, flare: 9.78, flash: 9.80, settle: [9.82, 10.10],
@@ -88,7 +88,7 @@
   const FOCUS_CARD = 2; // push-in target + front of the stack
 
   // typing schedule: per card, per line [tStart, tEnd]
-  const TYPE_START = [2.30, 2.42, 2.36, 2.48], LINE_PAUSE = 0.06;
+  const TYPE_START = [3.05, 3.15, 3.10, 3.20], LINE_PAUSE = 0.06;
   CARDS.forEach((c, i) => {
     const chars = c.code.reduce((a, l) => a + l.trimStart().length, 0);
     const avail = T.done[i] - 0.12 - TYPE_START[i] - LINE_PAUSE * c.code.length;
