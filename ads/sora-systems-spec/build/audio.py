@@ -127,14 +127,14 @@ class Bus:
 
 
 # ===================================================================== MUSIC
-CH = [  # (start, end, bass midi, chord midis)
-    (1.0, 6.0, 39, [51, 54, 58, 61, 65]),        # Ebm9
-    (6.0, 8.0, 35, [51, 54, 58, 59, 63]),        # Cbmaj7 (B)
-    (8.0, 10.0, 44, [51, 56, 59, 63, 66]),       # Abm9
-    (10.0, 11.75, 46, [51, 53, 56, 58, 61]),     # Bb7sus
-    (12.0, 16.0, 39, [51, 55, 58, 62, 65, 70]),  # Ebmaj9 (lift)
-    (16.0, 18.0, 44, [51, 56, 60, 63, 67]),      # Abmaj9/Eb
-    (18.0, DUR, 39, [51, 55, 58, 62, 65, 70]),   # Ebmaj9
+CUT = 9.70   # hard cut to silence before the flash reveal
+CH = [  # (start, end, bass midi, chord midis) — on the reference beats
+    (0.82, 3.80, 39, [51, 54, 58, 61, 65]),      # Ebm9 (burst)
+    (3.80, 5.00, 35, [51, 54, 58, 59, 63]),      # Cbmaj7 (push-in)
+    (5.00, 6.78, 44, [51, 56, 59, 63, 66]),      # Abm9
+    (6.78, CUT, 46, [51, 53, 56, 58, 61]),       # Bb7sus (morning, build)
+    (9.80, 12.96, 39, [51, 55, 58, 62, 65, 70]), # Ebmaj9 (lift on the reveal)
+    (12.96, DUR, 39, [51, 55, 58, 62, 65, 70]),  # Ebmaj9 (end card)
 ]
 
 
@@ -152,13 +152,13 @@ def music():
     pad, bass, pulse, arp, ris = Bus(), Bus(), Bus(), Bus(), Bus()
     # --- pad
     for (a, b, bm, notes) in CH:
-        lift = a >= 12.0
+        lift = a >= 9.8
         n = int((b - a + 1.4) * SR)
         t = tvec(n)
         att = 0.5 if a > 1.0 else 0.9
         e = np.clip(t / att, 0, 1) ** 2 * np.where(t < b - a, 1.0, np.exp(-(t - (b - a)) / 0.35))
-        if b == 11.75:  # hard stop into the hush
-            e *= np.clip((11.75 - a - t) / 0.04 + 1, 0, 1) * (t < (11.75 - a + 0.04))
+        if b == CUT:  # hard stop into the hush
+            e *= np.clip((CUT - a - t) / 0.03 + 1, 0, 1)
         L = np.zeros(n); R = np.zeros(n)
         for j, m in enumerate(notes):
             v = pad_voice(hz(m), n, 1.3 if lift else 0.8) * (1 / (1 + 0.12 * j))
@@ -173,41 +173,41 @@ def music():
         n = int((b - a + 0.6) * SR)
         t = tvec(n)
         e = np.clip(t / 0.3, 0, 1) * np.where(t < b - a, 1.0, np.exp(-(t - (b - a)) / 0.2))
-        if b == 11.75:  # smooth 30 ms gate into the hush
-            e *= np.clip((11.75 - a - t) / 0.03 + 1, 0, 1)
+        if b == CUT:  # smooth 30 ms gate into the hush
+            e *= np.clip((CUT - a - t) / 0.03 + 1, 0, 1)
         sub = np.sin(2 * np.pi * hz(bm - 12) * t) * 0.6 + np.sin(2 * np.pi * hz(bm) * t) * 0.25
         bass.add(a, np.tanh(1.4 * sub * e) * 0.2)
     # 8th-note pumping bass through the work and the build (3.0 - 11.75)
-    for k in range(int((11.75 - 3.0) / (BEAT / 2))):
-        t0 = 3.0 + k * BEAT / 2
+    for k in range(int((CUT - 2.3) / (BEAT / 2))):
+        t0 = 2.3 + k * BEAT / 2
         bm = [c[2] for c in CH if c[0] <= t0 < c[1]][0]
         n = int(0.24 * SR)
         f = hz(bm)
         tt = tvec(n)
         x = (np.sin(2 * np.pi * f * tt) + 0.4 * np.sin(4 * np.pi * f * tt) + 0.15 * np.sin(6 * np.pi * f * tt))
-        x *= env(n, 0.006, 0.09 if t0 < 8 else 0.12)
-        bass.add(t0, fade(lp(x, 900)), gain=0.07 if t0 < 8 else 0.09)
+        x *= env(n, 0.006, 0.09 if t0 < 6.78 else 0.12)
+        bass.add(t0, fade(lp(x, 900)), gain=0.07 if t0 < 6.78 else 0.09)
     # --- kick on 1 and 3 (every beat pair), 3.0 - 11.5
-    for k in range(int((11.6 - 3.0) / (2 * BEAT)) + 1):
-        t0 = 3.0 + k * 2 * BEAT
+    for k in range(int((CUT - 0.1 - 2.3) / (2 * BEAT)) + 1):
+        t0 = 2.3 + k * 2 * BEAT
         n = int(0.4 * SR)
         tt = tvec(n)
         fr = 48 * (1 + 2.2 * np.exp(-tt / 0.03))
         x = np.sin(2 * np.pi * np.cumsum(fr) / SR) * env(n, 0.002, 0.12)
         pulse.add(t0, fade(np.tanh(2 * x)), gain=0.32)
     # --- clock-tick pulse (16ths, accents on beats) through the time-lapse, hats in the build
-    for k in range(int((11.75 - 3.4) / (BEAT / 4))):
-        t0 = 3.4 + k * BEAT / 4
+    for k in range(int((CUT - 2.3) / (BEAT / 4))):
+        t0 = 2.3 + k * BEAT / 4
         acc = k % 4 == 0
         n = int(0.05 * SR)
         nz = bp(rng.standard_normal(n), 3500, 11000) * env(n, 0.0005, 0.008 if not acc else 0.014)
         tone = np.sin(2 * np.pi * (2600 if acc else 3900) * tvec(n)) * env(n, 0.0005, 0.006)
-        g = (0.10 if acc else 0.055) * (1.0 if t0 < 8.0 else 1.25)
+        g = (0.10 if acc else 0.055) * (1.0 if t0 < 6.78 else 1.25)
         pulse.add(t0, fade(nz * 0.8 + tone * 0.5), pan=0.25 if k % 2 else -0.25, gain=g)
     # --- glassy arp: 8ths 3.5 - 11.75, filter opens towards 07:00 and through the build
     pat = [0, 3, 7, 10, 14, 10, 7, 3]
-    for k in range(int((11.75 - 3.5) / (BEAT / 2))):
-        t0 = 3.5 + k * BEAT / 2
+    for k in range(int((CUT - 2.3) / (BEAT / 2))):
+        t0 = 2.3 + k * BEAT / 2
         root = [c[3][0] for c in CH if c[0] <= t0 < c[1]][0] + 12
         chord = [c[3] for c in CH if c[0] <= t0 < c[1]][0]
         cand = sorted(set(m + 12 * o for m in chord for o in (0, 1)))
@@ -216,13 +216,13 @@ def music():
         tt = tvec(n)
         mod = np.sin(2 * np.pi * hz(m) * 3.5 * tt) * 1.2 * np.exp(-tt / 0.08)
         x = np.sin(2 * np.pi * hz(m) * tt + mod) * env(n, 0.002, 0.22)
-        open_ = np.clip((t0 - 3.5) / 4.5, 0, 1)
+        open_ = np.clip((t0 - 2.3) / 4.5, 0, 1)
         x = lp(x, 1500 + 6000 * open_)
         arp.add(t0, fade(x), pan=0.45 * np.sin(k * 1.3), gain=0.05 + 0.03 * open_)
     # slow brand arp after the lift (quarters, Eb major pentatonic)
     for k, m in enumerate([75, 79, 82, 87, 86, 82, 79, 77, 75, 79, 82, 84]):
-        t0 = 12.5 + k * BEAT
-        if t0 > 17.4:
+        t0 = 10.1 + k * BEAT
+        if t0 > 12.9:
             break
         n = int(1.4 * SR)
         tt = tvec(n)
@@ -233,18 +233,18 @@ def music():
         n = int(2.5 * SR)
         tt = tvec(n)
         x = (np.sin(2 * np.pi * hz(m) * tt) + 0.25 * np.sin(2 * np.pi * hz(m) * 2 * tt)) * env(n, 0.003, 0.9)
-        arp.add(18.2 + dt, fade(x), pan=(k - 1.5) * 0.3, gain=0.05)
+        arp.add(13.95 + dt, fade(x), pan=(k - 1.5) * 0.3, gain=0.05)
     # --- risers
-    n = int(1.0 * SR)  # into the flash
+    n = int(0.82 * SR)  # into the burst
     x = svf_sweep(n, 300, 6000, 1.2) * np.linspace(0, 1, n) ** 2.5
     ris.add(0.0, fade(norm(x)), gain=0.12)
-    n = int(1.75 * SR)  # the build into the hush
+    n = int((CUT - 8.4) * SR)  # the build into the hush
     tt = tvec(n)
     x = norm(svf_sweep(n, 250, 9000, 1.4)) * np.linspace(0, 1, n) ** 2
     saw = sum(np.sin(2 * np.pi * hz(58) * k * (1 + 0.5 * (tt / tt[-1]) ** 2) * tt) / k for k in range(1, 8))
     x = x * 0.7 + lp(saw, 3000) * 0.15 * np.linspace(0, 1, n) ** 2
     x[-int(0.02 * SR):] *= np.linspace(1, 0, int(0.02 * SR))
-    ris.add(10.0, x, gain=0.22)
+    ris.add(8.4, x, gain=0.22)
     stems = {'music_pad': pad.out(), 'music_bass': bass.out(), 'music_pulse': pulse.out(), 'music_arp': arp.out(), 'music_risers': ris.out()}
     # send pad + arp to the big room
     stems['music_pad'] = stems['music_pad'] + 0.35 * reverb(stems['music_pad'], IR_BIG)

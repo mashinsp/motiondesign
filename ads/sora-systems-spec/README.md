@@ -4,7 +4,8 @@
 |---|---|---|
 | 1. Brief | approved | `BRIEF.md`, `ref_analysis/` |
 | 2. Assets | approved | `ASSETS.md`, `assets_in/` (+ `CREDITS.md`) |
-| 4. Preview v1 (16:9) | **awaiting feedback** | `out/SORA_preview_v1_16x9.mp4`, `out/SORA_preview_v1_contact_sheet.jpg` |
+| 4. Preview v1 (16:9) | feedback received | `out/SORA_preview_v1_16x9.mp4` |
+| 4. Preview v2 (16:9) | **awaiting feedback** | `out/SORA_preview_v2_16x9.mp4`, `out/SORA_preview_v2_contact_sheet.jpg` |
 | 5. Finals 16:9 + 9:16, stems | after approval | |
 
 ## Build (all code, deterministic)

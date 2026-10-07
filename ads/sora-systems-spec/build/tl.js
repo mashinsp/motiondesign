@@ -1,7 +1,7 @@
 // SORA SYSTEMS spec ad — shared timeline (picture + sound). Format-independent.
 // Loaded by the canvas page (window.TL) and by node (require) to export events.json.
 (function (root) {
-  const FPS = 60, DUR = 21.0, BPM = 120;
+  const FPS = 60, BPM = 120;
 
   // ---------- math ----------
   const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
@@ -21,18 +21,17 @@
   };
   const hash = (n) => { const s = Math.sin(n * 127.1 + 311.7) * 43758.5453; return s - Math.floor(s); };
 
-  // ---------- beats (seconds) ----------
+  // ---------- beats (seconds) — reference timing ----------
   const T = {
-    emberRise: [0.0, 0.5], swell: [0.5, 1.0], flash: 1.0, shock: [1.0, 2.0],
-    suck: [2.0, 2.4], split: [2.4, 2.9], unfold: [3.0, 3.4], clockIn: 3.12,
-    work: [3.4, 8.0], pushIn: [5.0, 5.8], pushHold: [5.8, 6.4], pullOut: [6.4, 7.0],
-    seven: 8.0, chips: [8.02, 8.1, 8.18, 8.26], stack: [8.3, 8.9],
-    check: [9.0, 9.6], btnIn: [10.0, 10.35], cursor: [10.08, 10.62], click: 10.75,
-    away: [10.8, 11.1], comets: [10.9, 11.75], silence: [11.75, 12.0], horizon: 12.0,
-    lockMark: [13.0, 13.6], word: [13.05, 13.7], slogan: [13.85, 14.5],
-    collapse: [17.5, 18.0], end: [18.0, DUR],
+    burst: 0.82, logoIn: 0.90, spiral: [1.60, 1.78], split: 1.80, spread: [1.84, 2.00], outline: [2.02, 2.10],
+    fill: [2.12, 2.18], stretch: [2.18, 2.22], clockIn: 2.20, textIn: [2.22, 2.30],
+    pushIn: [3.80, 3.94], pullOut: [4.82, 5.00], done: [5.90, 6.25, 6.60, 6.90], morning: 6.78,
+    stack: [7.22, 7.78], check: [7.78, 8.40], btnIn: [8.36, 8.44], pointer: [8.80, 8.96], hover: [9.04, 9.12], click: 9.12,
+    merge: [9.14, 9.40], comets: [9.36, 9.68], cut: 9.70, flare: 9.78, flash: 9.80, settle: [9.82, 10.10],
+    blur: [10.70, 10.78], slide: [10.80, 11.00], spark: [10.84, 10.96], write: [11.06, 11.40], tagline: [11.40, 11.60],
+    dissolve: [12.96, 13.06], pop: 13.06, dash: [13.10, 13.34], email: [13.38, 13.90], cta: [13.95, 14.20],
   };
-
+  const DUR_ = 16.6;
   // ---------- cards (one per service) ----------
   const CARDS = [
     {
@@ -89,10 +88,10 @@
   const FOCUS_CARD = 2; // push-in target + front of the stack
 
   // typing schedule: per card, per line [tStart, tEnd]
-  const TYPE_START = [3.5, 3.62, 3.74, 3.86], TYPE_END = 7.55, LINE_PAUSE = 0.07;
+  const TYPE_START = [2.30, 2.42, 2.36, 2.48], LINE_PAUSE = 0.06;
   CARDS.forEach((c, i) => {
     const chars = c.code.reduce((a, l) => a + l.trimStart().length, 0);
-    const avail = TYPE_END - TYPE_START[i] - LINE_PAUSE * c.code.length;
+    const avail = T.done[i] - 0.12 - TYPE_START[i] - LINE_PAUSE * c.code.length;
     const dt = avail / chars;
     let t = TYPE_START[i];
     c.lineT = c.code.map((l) => { const n = l.trimStart().length; const a = t; t += n * dt + LINE_PAUSE; return [a, a + n * dt]; });
@@ -105,8 +104,9 @@
 
   // clock: 23:58 -> 07:00, minutes since midnight (mod 1440)
   const clockMin = (t) => {
-    if (t >= T.seven) return 7 * 60;
-    const m = lerp(-2, 419, eio(prog(t, T.work[0], T.seven - 0.06)));
+    if (t >= T.morning) return 7 * 60;
+    const tq = Math.floor(t / 0.15) * 0.15;   // ticks forward in bursts
+    const m = lerp(-2, 419, eio(prog(tq, T.clockIn, T.morning - 0.05)));
     return (Math.floor(m) + 1440) % 1440;
   };
   const clockStr = (m) => {
@@ -127,43 +127,55 @@
   // ---------- sound events (frame-accurate) ----------
   const EV = [];
   const ev = (t, type, o = {}) => EV.push(Object.assign({ t: Math.round(t * FPS) / FPS, type, gain: 1, pan: 0 }, o));
-  ev(0.0, 'ember', { dur: 0.6 });
-  ev(0.5, 'swell', { dur: 0.5 });
-  ev(T.flash, 'impact', { size: 1.0 });
-  ev(T.flash, 'shock', { dur: 0.9 });
-  ev(T.flash + 0.04, 'sparkle', { dur: 0.9, gain: 0.7 });
-  ev(T.suck[0], 'reverse', { dur: 0.4, gain: 0.7 });
-  ev(2.4, 'whoosh', { dur: 0.35, pan: -0.5, gain: 0.8 });
-  ev(2.52, 'whoosh', { dur: 0.35, pan: 0.5, gain: 0.8 });
-  [0, 1, 2, 3].forEach((i) => ev(2.84 + i * 0.03, 'tick', { pan: (i - 1.5) * 0.4, gain: 0.5 }));
-  [0, 1, 2, 3].forEach((i) => ev(3.06 + i * 0.06, 'thunk', { pan: (i - 1.5) * 0.4, gain: 0.8 }));
+  ev(0.0, 'ember', { dur: 0.8 });
+  ev(0.45, 'swell', { dur: 0.37 });
+  ev(T.burst, 'impact', { size: 1.0 });
+  ev(T.burst, 'shock', { dur: 0.7 });
+  ev(T.burst + 0.06, 'sparkle', { dur: 0.6, gain: 0.7 });
+  ev(T.spiral[0], 'reverse', { dur: 0.2, gain: 0.6 });
+  ev(T.split, 'impact', { size: 0.45 });
+  ev(T.split + 0.02, 'whoosh', { dur: 0.3, pan: -0.5, gain: 0.7 });
+  ev(T.split + 0.04, 'whoosh', { dur: 0.3, pan: 0.5, gain: 0.7 });
+  [0, 1, 2, 3].forEach((i) => ev(1.98 + i * 0.015, 'tick', { pan: (i - 1.5) * 0.4, gain: 0.5 }));
+  ev(T.outline[0], 'shimmer', { dur: 0.35, gain: 0.35 });
+  [0, 1, 2, 3].forEach((i) => ev(T.fill[0] + i * 0.02, 'thunk', { pan: (i - 1.5) * 0.4, gain: 0.7 }));
   ev(T.clockIn, 'tick', { gain: 0.45 });
-  CARDS.forEach((c, i) => c.lineT.forEach(([a, b]) => ev(b, 'type', { pan: (i - 1.5) * 0.35, gain: 0.35 })));
-  ev(T.pushIn[0], 'cam', { dur: 0.8, gain: 0.6 });
-  ev(T.pullOut[0], 'cam', { dur: 0.6, gain: 0.5, dir: -1 });
-  ev(T.seven, 'chime', { gain: 0.9 });
-  T.chips.forEach((t, i) => ev(t, 'pop', { pan: (i - 1.5) * 0.4, gain: 0.6 }));
-  ev(T.stack[0], 'whoosh', { dur: 0.5, gain: 0.7 });
-  ev(T.stack[1] - 0.04, 'thud', { gain: 0.8 });
-  ev(T.check[0], 'swipe', { dur: 0.6, gain: 0.8 });
-  ev(T.check[1], 'impact', { size: 0.45 });
-  ev(T.btnIn[0], 'pop', { gain: 0.6 });
-  ev(T.cursor[0], 'glide', { dur: 0.55, gain: 0.35 });
+  CARDS.forEach((c, i) => c.lineT.forEach(([a, b]) => ev(b, 'type', { pan: (i - 1.5) * 0.35, gain: 0.3 })));
+  ev(T.pushIn[0], 'cam', { dur: 0.3, gain: 0.75 });
+  ev(T.pushIn[1], 'thud', { gain: 0.35 });
+  ev(T.pullOut[0], 'cam', { dur: 0.25, gain: 0.65, dir: -1 });
+  T.done.forEach((t, i) => { ev(t, 'pop', { pan: (i - 1.5) * 0.4, gain: 0.65 }); ev(t, 'tick', { pan: (i - 1.5) * 0.4, gain: 0.4 }); });
+  ev(T.morning, 'chime', { gain: 0.85 });
+  ev(T.stack[0], 'whoosh', { dur: 0.35, gain: 0.7 });
+  ev(7.70, 'thud', { gain: 0.75 });
+  ev(T.check[0], 'swipe', { dur: 0.62, gain: 0.8 });
+  ev(T.check[1], 'impact', { size: 0.35 });
+  ev(T.btnIn[0], 'pop', { gain: 0.55 });
+  ev(T.pointer[0], 'glide', { dur: 0.2, gain: 0.35 });
+  ev(T.hover[0], 'shimmer', { dur: 0.2, gain: 0.3 });
   ev(T.click, 'click', { gain: 1.0 });
   ev(T.click, 'impact', { size: 0.4 });
-  [0, 1, 2, 3].forEach((k) => ev(T.comets[0] + 0.05 + k * 0.09, 'comet', { dur: 0.6, pan: -0.6 + k * 0.4, gain: 0.7, k }));
-  ev(T.silence[0] - 0.15, 'reverse', { dur: 0.3, gain: 0.8 });
-  ev(T.horizon, 'impact', { size: 1.3 });
-  ev(T.horizon, 'shimmer', { dur: 2.2, gain: 0.7 });
-  ev(T.word[0], 'whoosh', { dur: 0.6, gain: 0.6 });
-  ev(T.word[0] + 0.25, 'shimmer', { dur: 1.2, gain: 0.5 });
-  [0, 1].forEach((i) => ev(T.slogan[0] + i * 0.18, 'tick', { gain: 0.25, pan: i ? 0.5 : -0.5 }));
-  ev(T.collapse[0] + 0.05, 'reverse', { dur: 0.45, gain: 0.6 });
-  ev(T.end[0], 'sting', { gain: 0.8 });
+  ev(T.merge[0] + 0.02, 'reverse', { dur: 0.2, gain: 0.45 });
+  [0, 1, 2, 3].forEach((k) => ev(T.comets[0] + k * 0.05, 'comet', { dur: 0.32, pan: -0.6 + k * 0.4, gain: 0.65, k }));
+  ev(T.flare - 0.02, 'swell', { dur: 0.04, gain: 0.5 });
+  ev(T.flash, 'impact', { size: 1.3 });
+  ev(T.flash, 'shimmer', { dur: 1.6, gain: 0.7 });
+  ev(T.slide[0], 'whoosh', { dur: 0.3, gain: 0.55 });
+  ev(T.spark[0], 'comet', { dur: 0.16, gain: 0.5, pan: 0.5, k: 4 });
+  'SoraSystems'.split('').forEach((_, i) => ev(T.write[0] + i * (T.write[1] - T.write[0]) / 11, 'tick', { gain: 0.22, pan: -0.3 + i * 0.06 }));
+  ev(T.write[0], 'shimmer', { dur: 0.6, gain: 0.45 });
+  ev(T.tagline[0], 'tick', { gain: 0.3 });
+  ev(T.dissolve[0], 'reverse', { dur: 0.1, gain: 0.5 });
+  ev(T.pop, 'pop', { gain: 0.6 });
+  ev(T.dash[0], 'glide', { dur: 0.2, gain: 0.4 });
+  for (let i = 0; i < 25; i += 2) ev(T.email[0] + i * (T.email[1] - T.email[0]) / 25, 'type', { gain: 0.25 });
+  ev(T.email[0], 'shimmer', { dur: 0.6, gain: 0.35 });
+  ev(T.cta[0], 'pop', { gain: 0.7 });
+  ev(T.cta[0], 'sting', { gain: 0.8 });
   EV.sort((a, b) => a.t - b.t);
 
   const TL = {
-    FPS, DUR, BPM, T, CARDS, FOCUS_CARD, typed, clockMin, clockStr, cometPos,
+    FPS, DUR: DUR_, BPM, T, CARDS, FOCUS_CARD, typed, clockMin, clockStr, cometPos,
     clamp, lerp, prog, eoc, eoq, eic, eio, eios, eoe, eie, spring, hash, EVENTS: EV,
   };
   if (typeof module !== 'undefined') module.exports = TL; else root.TL = TL;
