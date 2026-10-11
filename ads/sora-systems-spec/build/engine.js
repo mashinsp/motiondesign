@@ -368,7 +368,7 @@
     const kin = spring(t - T.pushIn[0], 3.4, 0.62), kout = t >= T.pullOut[0] ? spring(t - T.pullOut[0], 3.8, 0.7) : 0;
     const k = t < T.pushIn[0] ? 0 : kin * (1 - kout);
     const z = 1 + (L.zoomMax - 1) * k + 0.02 * Math.sin(Math.max(0, t - 3.94) * 1.3) * k;
-    const fc = [L.cards[FOCUS_CARD][0], L.cards[FOCUS_CARD][1] - 70 * CS];
+    const fc = [L.cards[FOCUS_CARD][0], L.cards[FOCUS_CARD][1] - 112 * CS];
     const kk = clamp(k, -0.2, 1.1);
     return { z, f: [lerp(CX0, fc[0], kk), lerp(CY0, fc[1], kk)], k: clamp(k) };
   }
