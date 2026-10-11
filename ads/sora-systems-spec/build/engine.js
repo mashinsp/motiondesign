@@ -61,8 +61,9 @@
     g.addColorStop(0, `rgba(255,255,255,${0.95 * inten})`); g.addColorStop(0.15, rgba(col, 0.7 * inten));
     g.addColorStop(0.45, rgba(col, 0.15 * inten)); g.addColorStop(1, rgba(col, 0));
     X.fillStyle = g; circle(X, px, py, r * halo); X.fill();
+    const m = X.getTransform(), q = 0.5 / SS; G.save(); G.setTransform(m.a * q, m.b * q, m.c * q, m.d * q, m.e * q, m.f * q);
     G.fillStyle = rgba(col, inten); circle(G, px, py, r * 1.8); G.fill();
-    G.fillStyle = `rgba(255,255,255,${inten})`; circle(G, px, py, r * 0.8); G.fill();
+    G.fillStyle = `rgba(255,255,255,${inten})`; circle(G, px, py, r * 0.8); G.fill(); G.restore();
   }
   const INTER = (sz, wt = 500) => `${wt} ${sz}px "Inter"`;
   const MONO = (sz, wt = 400) => `${wt} ${sz}px "JetBrains Mono"`;
