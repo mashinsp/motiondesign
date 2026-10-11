@@ -618,7 +618,7 @@
     if (tg > 0) {
       X.save(); X.globalAlpha = tg * (1 - dis); const bl = (1 - tg) * 8 + blurAll; if (bl > 0.3) X.filter = `blur(${((bl) * SS).toFixed(1)}px)`;
       X.font = `500 ${g.tagFs.toFixed(1)}px "Inter"`; X.fillStyle = '#BADEF9'; X.textBaseline = 'alphabetic';
-      X.textAlign = 'left'; X.fillText('Intelligent technology', g.wordX, g.tagY);
+      X.textAlign = 'left'; X.fillText('Intelligent technology', g.wordX + W * 0.00156, g.tagY);
       X.textAlign = 'right'; X.fillText('Built for real impact', g.left + g.tot, g.tagY);
       X.restore();
     }
